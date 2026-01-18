@@ -30,6 +30,8 @@ import {
 } from "react-icons/fa";
 
 export default function ProductDetail() {
+  const [isZoomed, setIsZoomed] = useState(true);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const product = products.find((p) => p.id.toString() === id);
@@ -256,14 +258,12 @@ export default function ProductDetail() {
     <div className="relative group">
       <div className="w-full h-auto rounded-xl md:rounded-2xl overflow-hidden ">
         <img
-          src={allImages[selectedImageIndex]}
-          alt={product.name}
-          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 "
-          style={{
-            width: "100%",
-            objectFit: "contain",
-          }}
-        />
+  src={allImages[selectedImageIndex]}
+  alt={product.name}
+  onClick={() => setIsLightboxOpen(true)}
+  className="w-full h-full object-contain cursor-zoom-in transition-transform duration-500 group-hover:scale-105"
+/>
+
         
         {/* Arrows on top of the image */}
        {allImages.length > 1 && (
@@ -679,6 +679,68 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      {isLightboxOpen && (
+  <div
+    className="fixed inset-0 z-50 bg-black flex items-center justify-center"
+    onClick={() => {
+      setIsZoomed(false);
+      setTimeout(() => setIsLightboxOpen(false), 200);
+    }}
+  >
+    {/* Image */}
+    <img
+      src={allImages[selectedImageIndex]}
+      alt="Preview"
+      className={`max-w-full max-h-full object-contain transition-transform duration-300 ${
+        isZoomed ? "scale-100" : "scale-75 opacity-0"
+      }`}
+      onClick={(e) => e.stopPropagation()}
+    />
+
+    {/* Arrows (desktop only) */}
+    {!isMobile && (
+      <>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            prevImage();
+          }}
+          className="absolute left-6 text-white text-4xl"
+        >
+          <FaArrowLeft />
+        </button>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            nextImage();
+          }}
+          className="absolute right-6 text-white text-4xl"
+        >
+          <FaArrowRight />
+        </button>
+      </>
+    )}
+
+    {/* Dots */}
+    <div
+      className="absolute bottom-6 flex gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {allImages.map((_, i) => (
+        <button
+          key={i}
+          onClick={() => setSelectedImageIndex(i)}
+          className={`w-2.5 h-2.5 rounded-full ${
+            selectedImageIndex === i ? "bg-white" : "bg-white/40"
+          }`}
+        />
+      ))}
+    </div>
+  </div>
+)}
+
+
 
       <style jsx>{`
   @keyframes fadeIn {

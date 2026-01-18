@@ -72,7 +72,7 @@ export default function ProductCard({ product }) {
   const addToCart = useCart((state) => state.addToCart);
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // card click ko block karega
+    e.stopPropagation(); // card click ko block karega.
     e.preventDefault();
 
     addToCart(product);
