@@ -30,6 +30,8 @@ import {
 } from "react-icons/fa";
 
 export default function ProductDetail() {
+  const [touchStartX, setTouchStartX] = useState(0);
+const [touchEndX, setTouchEndX] = useState(0);
   const [isZoomed, setIsZoomed] = useState(true);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const { id } = useParams();
@@ -45,6 +47,31 @@ export default function ProductDetail() {
   const [reviews, setReviews] = useState([]);
   const [form, setForm] = useState({ name: "", rating: 5, comment: "" });
   const [loading, setLoading] = useState(false);
+
+const handleTouchStart = (e) => {
+  setTouchStartX(e.touches[0].clientX);
+};
+
+const handleTouchMove = (e) => {
+  setTouchEndX(e.touches[0].clientX);
+};
+
+const handleTouchEnd = () => {
+  if (!touchStartX || !touchEndX) return;
+
+  const distance = touchStartX - touchEndX;
+
+  // minimum swipe distance
+  if (distance > 50) {
+    nextImage(); // swipe left → next
+  } else if (distance < -50) {
+    prevImage(); // swipe right → prev
+  }
+
+  setTouchStartX(0);
+  setTouchEndX(0);
+};
+
 
   // Mobile screen detection
   const [isMobile, setIsMobile] = useState(false);
@@ -688,14 +715,18 @@ export default function ProductDetail() {
     }}
   >
     {/* Image */}
-    <img
-      src={allImages[selectedImageIndex]}
-      alt="Preview"
-      className={`max-w-full max-h-full object-contain transition-transform duration-300 ${
-        isZoomed ? "scale-100" : "scale-75 opacity-0"
-      }`}
-      onClick={(e) => e.stopPropagation()}
-    />
+   <img
+  src={allImages[selectedImageIndex]}
+  alt="Preview"
+  className={`max-w-full max-h-full object-contain transition-transform duration-300 ${
+    isZoomed ? "scale-100" : "scale-75 opacity-0"
+  }`}
+  onClick={(e) => e.stopPropagation()}
+  onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  onTouchEnd={handleTouchEnd}
+/>
+
 
     {/* Arrows (desktop only) */}
     {!isMobile && (

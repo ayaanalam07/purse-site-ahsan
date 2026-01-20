@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: auto;
+}
+
 :root {
 --color-warm-ivory: #FFFAF0;
   --color-deep-mocha: #3E2723;
